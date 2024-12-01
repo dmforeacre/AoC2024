@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "console": "externalTerminal",
+      "cwd": "c:/Users/dmfor/OneDrive/Code Challenges/AoC2024",
+      "program": "c:/Users/dmfor/OneDrive/Code Challenges/AoC2024/build/Debug/outDebug"
+    }
+  ]
+}
