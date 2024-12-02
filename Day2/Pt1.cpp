@@ -3,25 +3,8 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include <algorithm>
-#include <numeric>
-#include <unordered_map>
 
-std::vector<std::string> splitString(std::string str)
-{
-    std::vector<std::string> tokens;
-
-    int spaceIndex = 0;
-    int prevIndex = 0;
-    while(spaceIndex < str.length())
-    {
-        prevIndex = spaceIndex;
-        spaceIndex = str.find(' ', prevIndex);
-        tokens.push_back(str.substr(prevIndex, spaceIndex));
-    }
-
-    return tokens;
-}
+std::vector<std::string> splitString(std::string);
 
 int main()
 {
@@ -36,10 +19,32 @@ int main()
     }
     inFile.close();
 
-    for(std::string i : list[0])
+    int count = 0;
+    for(std::vector<std::string> line : list)
     {
-        std::cout << i << " ";
+        bool valid = true;
+        for(std::string value : line)
+        {
+            
+        }
     }
 
+    std::cout << count << std::endl;
     return 0;
+}
+
+std::vector<std::string> splitString(std::string str)
+{
+    std::vector<std::string> tokens;
+
+    int spaceIndex = -1;
+    int prevIndex = 0;
+    do
+    {
+        prevIndex = spaceIndex + 1;
+        spaceIndex = str.find(' ', prevIndex);
+        tokens.push_back(str.substr(prevIndex, spaceIndex - prevIndex));
+    }while(spaceIndex < str.size());
+
+    return tokens;
 }
