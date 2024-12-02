@@ -3,8 +3,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
-
-std::vector<std::string> splitString(std::string);
+#include "../Utils.h"
 
 int main()
 {
@@ -20,31 +19,35 @@ int main()
     inFile.close();
 
     int count = 0;
+    int index = 0;
     for(std::vector<std::string> line : list)
     {
-        bool valid = true;
-        for(std::string value : line)
+        ++index;
+        bool safe = true;
+        bool decreasing = true;
+        if(stoi(line[0])-stoi(line[1]) < 0)
+            decreasing = false;
+        for(int i = 0; i < line.size() - 1; ++i)
         {
-            
+            int diff = stoi(line[i])-stoi(line[i+1]);
+            if((decreasing && diff < 0) || (!decreasing && diff > 0))
+            {
+                safe = false;
+                break;
+            }
+            if(diff == 0 || abs(diff) > 3)
+            {
+                safe = false;
+                break;
+            }
+        }
+        if(safe)
+        {
+            ++count;
         }
     }
 
     std::cout << count << std::endl;
+    msg(list.size());
     return 0;
-}
-
-std::vector<std::string> splitString(std::string str)
-{
-    std::vector<std::string> tokens;
-
-    int spaceIndex = -1;
-    int prevIndex = 0;
-    do
-    {
-        prevIndex = spaceIndex + 1;
-        spaceIndex = str.find(' ', prevIndex);
-        tokens.push_back(str.substr(prevIndex, spaceIndex - prevIndex));
-    }while(spaceIndex < str.size());
-
-    return tokens;
 }

@@ -7,7 +7,7 @@
       ],
       "compilerPath": "C:/Program Files/LLVM/bin/clang.exe",
       "cStandard": "c23",
-      "cppStandard": "${default}",
+      "cppStandard": "c++23",
       "intelliSenseMode": "windows-clang-x64",
       "compilerArgs": [
         ""
