@@ -61,7 +61,8 @@
     "iostream": "cpp",
     "ranges": "cpp",
     "numeric": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "cmath": "cpp"
   },
   "C_Cpp.default.cppStandard": "c++23"
 }
