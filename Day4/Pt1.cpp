@@ -1,28 +1,84 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <regex>
+#include <vector>
 #include "../Utils.h"
+
+void xmasSearch(std::vector<std::vector<char>>&, int, int, int, int&);
+bool isValidPos(std::vector<std::vector<char>>&, int, int);
+
+const std::vector<char> LETTERS = {'X', 'M', 'A', 'S'};
 
 int main()
 {
     std::string text;
     std::fstream inFile("input.txt");
-    std::smatch match;
-    std::regex pattern("(mul\()(d+)(,)(d+)(\051)");
+    std::vector<std::vector<char>> grid;
 
-    int sum = 0;
+    int count = 0;
     while(!inFile.eof())
     {
         getline(inFile, text);
-        while(std::regex_search(text, match, pattern))
+        std::vector<char> line;
+        for(char c : text)
         {
-            for(int i = 0; i < match.size(); ++i)
-                msg(match[i]);
+            line.push_back(c);
         }
+        grid.push_back(line);
     }
     inFile.close();
 
-    msg(sum);
+    for(int y=0;y<5;y++)
+    {
+        for(int x=0;x<5;x++)
+        {
+            std::cout << grid[y][x];
+        }
+        std::cout << "\n";
+    }
+
+    for(int y = 0; y < /*grid.size()*/5; y++)
+    {
+        for(int x = 0; x < /*grid[y].size()*/5; x++)
+        {
+            if(grid[y][x] == LETTERS[0])
+            {
+                msg("Starting at",y,x,"with X");
+                xmasSearch(grid, y, x, 0, count);
+            }
+        }
+    }
+
+    msg(count);
     return 0;
+}
+
+void xmasSearch(std::vector<std::vector<char>>& grid, int yPos, int xPos, int targetLetterIndex, int& count)
+{
+    if(grid[yPos][xPos] == LETTERS[targetLetterIndex])
+    {
+        msg("   Found", LETTERS[targetLetterIndex],"at",xPos,yPos);
+        if(LETTERS[targetLetterIndex] == 'S')
+        {
+            ++count;
+            msg("       XMAS complete:",count);
+            return;
+        }
+        for(int y = yPos - 1; y <= yPos + 1; y++)
+        {
+            for(int x = xPos -1; x <= xPos + 1; x++)
+            {
+                if(!(x == xPos && y == yPos) && isValidPos(grid, x, y))
+                {
+                    xmasSearch(grid, y, x, targetLetterIndex + 1, count);
+                    msg("      checking",y,x);
+                }
+            }
+        }
+    }
+}
+
+bool isValidPos(std::vector<std::vector<char>>& grid, int xPos, int yPos)
+{
+    return !(xPos == -1 || yPos == -1 || xPos >= grid[yPos].size() || yPos >= grid.size());
 }
