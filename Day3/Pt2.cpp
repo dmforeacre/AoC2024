@@ -10,7 +10,7 @@ int main()
     std::fstream inFile("input.txt");
     std::smatch match, execute;
     std::regex pattern("(mul\\()(\\d+)(,)(\\d+)(\\))");
-    std::regex executePattern("(do(n't)?\\(\\))");
+    std::regex executePattern("do(n't)?\\(\\)");
 
     int sum = 0;
     bool canExecute = true;
@@ -22,7 +22,10 @@ int main()
             std::string prefix = match.prefix();
             while(std::regex_search(prefix, execute, executePattern))
             {
-                canExecute = !canExecute;
+                if(execute[1] == "n't")
+                    canExecute = false;
+                else
+                    canExecute = true;
                 prefix = execute.prefix();
             }
             if(canExecute)
