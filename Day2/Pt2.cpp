@@ -6,7 +6,6 @@
 #include "../Utils.h"
 
 bool isSafe(std::vector<std::string>);
-int countDirectionChanges(std::vector<std::string>);
 
 int main()
 {
