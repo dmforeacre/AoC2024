@@ -12,7 +12,7 @@ const std::vector<char> LETTERS = {'X', 'M', 'A', 'S'};
 int main()
 {
     std::string text;
-    std::fstream inFile("input.txt");
+    std::fstream inFile("test.txt");
     std::vector<std::vector<char>> grid;
 
     int count = 0;
@@ -28,12 +28,22 @@ int main()
     }
     inFile.close();
 
+    for(int y=0;y<5;y++)
+    {
+        for(int x=0;x<5;x++)
+        {
+            std::cout << grid[y][x];
+        }
+        std::cout << "\n";
+    }
+
     for(int y = 0; y < grid.size(); y++)
     {
         for(int x = 0; x < grid[y].size(); x++)
         {
             if(grid[y][x] == LETTERS[0])
             {
+                msg("Starting at",y,x,"with X");
                 xmasSearch(grid, y, x, 0, count);
             }
         }
@@ -45,29 +55,30 @@ int main()
 
 void xmasSearch(std::vector<std::vector<char>>& grid, int yPos, int xPos, int targetLetterIndex, int& count)
 {
-    for(int y = -1; y <= 1; y++)
+    if(grid[yPos][xPos] == LETTERS[targetLetterIndex])
     {
-        for(int x = -1; x <= 1; x++)
+        msg("   Found", LETTERS[targetLetterIndex],"at",yPos,xPos);
+        if(LETTERS[targetLetterIndex] == 'S')
         {
-            int testY = yPos + y;
-            int testX = xPos + x;
-            int i = targetLetterIndex + 1;
-            while(!(x == 0 && y == 0) && isValidPos(grid, testY, testX) && grid[testY][testX]==LETTERS[i])
+            ++count;
+            msg("       XMAS complete:",count);
+            return;
+        }
+        for(int y = yPos - 1; y <= yPos + 1; y++)
+        {
+            for(int x = xPos -1; x <= xPos + 1; x++)
             {
-                i++;
-                testY = testY + y;
-                testX = testX + x;
-                if(i >= LETTERS.size())
+                if(!(x == xPos && y == yPos) && isValidPos(grid, x, y))
                 {
-                    count++;
-                    continue;
+                    xmasSearch(grid, y, x, targetLetterIndex + 1, count);
+                    msg("      checking",y,x);
                 }
             }
         }
     }
 }
 
-bool isValidPos(std::vector<std::vector<char>>& grid, int yPos, int xPos)
+bool isValidPos(std::vector<std::vector<char>>& grid, int xPos, int yPos)
 {
     return !(xPos == -1 || yPos == -1 || xPos >= grid[yPos].size() || yPos >= grid.size());
 }
