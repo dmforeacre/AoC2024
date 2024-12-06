@@ -10,7 +10,7 @@
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
     std::vector<std::string> tokens;
     std::unordered_map<int, std::vector<int>> pageOrders;
 
@@ -32,29 +32,38 @@ int main()
         {
             update.push_back(stoi(t));
         }
-        /*for(int i : update)
-        {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;*/
 
-        bool isFixed = false;
-        std::vector<int>::iterator iter = update.begin();
-
-        while(iter != update.end())
+        bool valid = true;
+        for(int i = 0; i < update.size(); ++i)
         {
-            for(int n : pageOrders[*iter])
+            for(int j = i - 1; j >= 0; --j)
             {
-                if(std::find(update.begin(), iter - 1, n) != update.end())
+                // Search through pageOrders map for all the pages that can NOT occur (j) before the given page (i)
+                if(std::find(pageOrders[update[i]].begin(), pageOrders[update[i]].end(), update[j]) != pageOrders[update[i]].end())
                 {
-                    isFixed = true;
-                    msg("Found",n,"Line",text,"before",*iter,"Needs fixed");
+                    valid = false;
                 }
             }
-            iter++;
         }
-        if(isFixed)
+        if(!valid)
         {
+            auto iter = update.begin();
+
+            while(iter < update.end())
+            {
+                for(auto i = update.begin(); i < iter; ++i)
+                {
+                    if(std::find(pageOrders[*iter].begin(), pageOrders[*iter].end(), *i) != pageOrders[*iter].end())
+                    {
+                        int temp = *iter;
+                        *iter = *i;
+                        *i = temp;
+                        iter = update.begin();
+                        break;
+                    }
+                }
+                ++iter;
+            }
             total += update[floor(update.size() / 2)];
         }
     }
