@@ -30,15 +30,23 @@ int main()
         {
             update.push_back(stoi(t));
         }
+        /*for(int i : update)
+        {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;*/
 
         bool valid = true;
         for(int i = 0; i < update.size(); ++i)
         {
+            //msg("Examining",update[i]);
             for(int j = i - 1; j >= 0; --j)
             {
+                //msg("   Checking if valid: ",update[j]);
                 // Search through pageOrders map for all the pages that can NOT occur (j) before the given page (i)
                 if(std::find(pageOrders[update[i]].begin(), pageOrders[update[i]].end(), update[j]) != pageOrders[update[i]].end())
                 {
+                    //msg("       Not Valid!");
                     valid = false;
                 }
             }
