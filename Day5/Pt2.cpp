@@ -2,13 +2,15 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cmath>
+#include <algorithm>
 #include <unordered_map>
 #include "../Utils.h"
 
 int main()
 {
     std::string text;
-    std::fstream inFile("input.txt");
+    std::fstream inFile("test.txt");
     std::vector<std::string> tokens;
     std::unordered_map<int, std::vector<int>> pageOrders;
 
@@ -36,22 +38,22 @@ int main()
         }
         std::cout << std::endl;*/
 
-        bool valid = true;
-        for(int i = 0; i < update.size(); ++i)
+        bool isFixed = false;
+        std::vector<int>::iterator iter = update.begin();
+
+        while(iter != update.end())
         {
-            //msg("Examining",update[i]);
-            for(int j = i - 1; j >= 0; --j)
+            for(int n : pageOrders[*iter])
             {
-                //msg("   Checking if valid: ",update[j]);
-                // Search through pageOrders map for all the pages that can NOT occur (j) before the given page (i)
-                if(std::find(pageOrders[update[i]].begin(), pageOrders[update[i]].end(), update[j]) != pageOrders[update[i]].end())
+                if(std::find(update.begin(), iter - 1, n) != update.end())
                 {
-                    //msg("       Not Valid!");
-                    valid = false;
+                    isFixed = true;
+                    msg("Found",n,"Line",text,"before",*iter,"Needs fixed");
                 }
             }
+            iter++;
         }
-        if(valid)
+        if(isFixed)
         {
             total += update[floor(update.size() / 2)];
         }
