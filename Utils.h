@@ -1,5 +1,7 @@
 #include <vector>
 #include <string>
+#include <ostream>
+#include <chrono>
 
 std::vector<std::string> splitString(std::string);
 std::vector<std::string> splitString(std::string, char);
@@ -8,24 +10,80 @@ void msg();
 template<typename T, typename... Args>
 void msg(T, Args...);
 
-struct point
+class Timer
 {
-    int x;
-    int y;
+    private:
+        std::chrono::time_point<std::chrono::high_resolution_clock> start;
+        std::chrono::time_point<std::chrono::high_resolution_clock> end;
+        double elapsed;
 
-    point()
-    {}
+    public:
+        void startTimer()
+        {
+            start = std::chrono::high_resolution_clock::now();
+        }
 
-    point(int X, int Y)
-    {
-        x = X;
-        y = Y;
-    }
+        double endTimer()
+        {
+            end = std::chrono::high_resolution_clock::now();
+            elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            return elapsed;
+        }
 
-    bool operator==(const point& right) const
-    {
-        return x == right.x && y == right.y;
-    }
+        double getElapsed()
+        {
+            return elapsed;
+        }      
+};
+
+class Point
+{
+    public:
+        int x;
+        int y;
+
+        Point()
+        {}
+
+        Point(int X, int Y)
+        {
+            x = X;
+            y = Y;
+        }
+
+        Point operator +(const Point& right)
+        {
+            return Point(x + right.x, y + right.y);
+        }
+
+        Point& operator +=(const Point& right)
+        {
+            x += right.x;
+            y += right.y;
+            return *this;
+        }
+                
+        Point operator -(const Point& right)
+        {
+            return Point(x - right.x, y - right.y);
+        }
+
+        Point& operator -=(const Point& right)
+        {
+            x -= right.x;
+            y -= right.y;
+            return *this;
+        }
+
+        bool operator==(const Point& right) const
+        {
+            return x == right.x && y == right.y;
+        }
+        friend std::ostream& operator<<(std::ostream& out, const Point& p)
+        { 
+            out << "(" << p.x << "," << p.y << ")";
+            return out;
+        }
 };
 
 std::vector<std::string> splitString(std::string str)

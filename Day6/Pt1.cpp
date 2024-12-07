@@ -5,19 +5,19 @@
 #include <unordered_map>
 #include "../Utils.h"
 
-bool pointInBounds(std::vector<std::vector<char>>&, point);
-point turnGuard(point);
+bool pointInBounds(std::vector<std::vector<char>>&, Point);
+Point turnGuard(Point);
 
 const std::vector<char> GUARDS = {'^','>','v','<'};
-const std::vector<point> MOVES = {point(0,-1), point(1,0), point(0,1), point(-1,0)};
+const std::vector<Point> MOVES = {Point(0,-1), Point(1,0), Point(0,1), Point(-1,0)};
 
 int main()
 {
     std::string text;
     std::fstream inFile("input.txt");
     std::vector<std::vector<char>> grid;
-    point guardPos;
-    point guardMove;
+    Point guardPos;
+    Point guardMove;
 
     int total = 0;
     int row = 0;
@@ -67,15 +67,12 @@ int main()
     return 0;
 }
 
-bool pointInBounds(std::vector<std::vector<char>>& grid, point pt)
+bool pointInBounds(std::vector<std::vector<char>>& grid, Point pt)
 {
-    bool inBounds = true;
-    if(pt.x < 0 || pt.y < 0 || pt.x >= grid[pt.y].size() || pt.y >= grid.size())
-        inBounds = false;
-    return inBounds;
+    return !(pt.x < 0 || pt.y < 0 || pt.x >= grid[pt.y].size() || pt.y >= grid.size());
 }
 
-point turnGuard(point pt)
+Point turnGuard(Point pt)
 {
     auto index = std::find(MOVES.begin(), MOVES.end(), pt);
     index++;

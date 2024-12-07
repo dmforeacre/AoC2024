@@ -122,7 +122,12 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xutility": "cpp",
-    "regex": "cpp"
+    "regex": "cpp",
+    "functional": "cpp",
+    "chrono": "cpp",
+    "forward_list": "cpp",
+    "iomanip": "cpp",
+    "sstream": "cpp"
   },
   "C_Cpp.default.cppStandard": "c++23"
 }
