@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include "../Utils.h"
 
 bool pointInBounds(std::vector<std::vector<char>>&, Point);
@@ -53,7 +52,6 @@ int main()
             incrementObstacle(grid, testObject);
             continue;
         }
-        //msg("Obstacle placed at",testObject);
         // Collection of points where guard turned, along with the current move at that point
         std::vector<std::vector<Point>> visitedPoints;
         Point guardPos = guardStartPos;
@@ -63,7 +61,6 @@ int main()
         {
             do
             {
-                //std::cout << " " << guardPos;
                 guardPos += guardMove;
             } while(pointInBounds(grid, guardPos) && grid[guardPos.y][guardPos.x] == '.');
             if(pointInBounds(grid, guardPos))
@@ -83,22 +80,9 @@ int main()
                 {
                     visitedPoints.push_back(pointPair);
                 }
-                //msg("   Obstacle encountered at",guardPos);
-                /*if(std::find(turns.begin(), turns.end(), guardPos) != turns.end())
-                {
-                    msg("       Found Loop with obstacle",testObject);
-                    //printGrid(grid);
-                    if(std::find(obstacleLocations.begin(), obstacleLocations.end(), testObject) == obstacleLocations.end())
-                    {
-                        obstacleLocations.push_back(testObject);
-                    }
-                }
-                turns.push_back(guardPos);*/
-                //msg("   Guard turns at",guardPos);
                 guardMove = turnGuard(guardMove);
             }
         }
-        //msg("Guard out of grid");
         grid[testObject.y][testObject.x] = '.';
         incrementObstacle(grid, testObject);
     }

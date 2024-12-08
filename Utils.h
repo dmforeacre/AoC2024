@@ -5,6 +5,8 @@
 
 std::vector<std::string> splitString(std::string);
 std::vector<std::string> splitString(std::string, char);
+template<typename T>
+void printVector(std::vector<T>&);
 void printGrid(std::vector<std::vector<char>>&);
 void msg();
 template<typename T, typename... Args>
@@ -86,6 +88,16 @@ class Point
         }
 };
 
+template<typename T>
+struct Node
+{
+    T data;
+    Node* left;
+    Node* right;
+
+    Node(T value) : data(value), left(nullptr), right(nullptr) {}
+};
+
 std::vector<std::string> splitString(std::string str)
 {
     return splitString(str, ' ');
@@ -105,6 +117,14 @@ std::vector<std::string> splitString(std::string str, char delimiter)
     }while(spaceIndex < str.size());
 
     return tokens;
+}
+
+template<class T>
+void printVector(std::vector<T>& vec)
+{
+    for(T t : vec)
+        std::cout << t << " ";
+    std::cout << "\n";
 }
 
 void printGrid(std::vector<std::vector<char>>& grid)
