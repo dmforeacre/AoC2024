@@ -5,33 +5,27 @@
 #include <vector>
 #include "../Utils.h"
 
-bool canCalc(long long value, std::list<long long> nums)
+bool canCalc(long long& value, std::list<long long>& nums)
 {
-    msg("   at", value);
-    if(value < 0)
-    {
-        msg("       Value too low");
-        return false;
-    }
     if(nums.size() == 1)
-    {
-        msg("       ",value,nums.front(),"is", value == nums.front());
         return value == nums.front();
-    }
-    long long num = nums.back();
-    if(((value * 10) / num) % 10 > 0)
-    {
-        msg("       Value is decimal");
-        return false;
-    }
-    nums.pop_back();
-    return canCalc(value - num, nums) || canCalc(value / num, nums);
+    std::list<long long> newNums1 = std::list<long long>(nums);
+    long long leftNum = newNums1.front();
+    newNums1.pop_front();
+    long long rightNum = newNums1.front();
+    newNums1.pop_front();
+    std::list<long long> newNums2 = std::list<long long>(newNums1);
+    std::list<long long> newNums3 = std::list<long long>(newNums1);
+    newNums1.push_front(leftNum + rightNum);
+    newNums2.push_front(leftNum * rightNum);
+    newNums3.push_front(std::atoll((std::to_string(leftNum) + std::to_string(rightNum)).c_str()));
+    return canCalc(value, newNums1) || canCalc(value, newNums2) || canCalc(value, newNums3);
 }
 
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     long long total = 0;
     Timer timer;
@@ -47,12 +41,8 @@ int main()
         std::list<long long> numbers;
         for(std::string t : tokens)
             numbers.push_back(std::atoll(t.c_str()));
-        msg("Testing: ", value);
         if(canCalc(value, numbers))
-        {
-            msg("       Is valid");
             total += value;
-        }
     }
     inFile.close();
     timer.endTimer();

@@ -34,7 +34,6 @@ int main()
         if(text == "") continue;
         std::vector<std::string> tokens = splitString(text, ':');
         long long value = std::atoll(tokens[0].c_str());
-        msg(tokens[0], value);
         tokens = splitString(tokens[1]);
         tokens.erase(tokens.begin());
         std::list<long long> numbers;
