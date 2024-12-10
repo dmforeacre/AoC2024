@@ -9,20 +9,23 @@
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     std::vector<int> fileSizes, spaceSizes;
 
-    int total = 0;
+    Timer t;
+    t.startTimer();
+
+    long total = 0;
     getline(inFile, text);
 
     int i = 0;
     while(i < text.size())
     {
-        fileSizes.push_back(text[i] - 48);
-        ++i;
-        if(i >= text.size()) break;
-        spaceSizes.push_back(text[i] - 48);
+        if(i % 2 == 0)
+            fileSizes.push_back(text[i] - 48);
+        else
+            spaceSizes.push_back(text[i] - 48);
         ++i;
     }
 
@@ -30,7 +33,8 @@ int main()
 
     std::vector<int> newDisk;
     std::list<int> reversedFiles;
-    int totalSize = std::accumulate(spaceSizes.begin(), spaceSizes.end(), 0) + std::accumulate(fileSizes.begin(), fileSizes.end(), 0);
+    int sumEmptySize = std::accumulate(spaceSizes.begin(), spaceSizes.end(), 0);
+    int sumFileSize = std::accumulate(fileSizes.begin(), fileSizes.end(), 0);
     
     for(int i = fileSizes.size() - 1; i >= 0; --i)
     {
@@ -39,32 +43,33 @@ int main()
             reversedFiles.push_back(i);
         }
     }
-    int forwardIt = 0; 
-    int backwardIt = totalSize;
-
     i = 0;
-    while(forwardIt < backwardIt)
+    int index = 0;
+    while(index < sumFileSize)
     {
         for(int count = 0; count < fileSizes[i]; ++count)
         {
             newDisk.push_back(i);
-            ++forwardIt;
-            if(forwardIt >= backwardIt) break;
+            ++index;
+            if(index >= sumFileSize) break;
         }
+        if(index >= sumFileSize) break;
         for(int count = 0; count < spaceSizes[i]; ++count)
         {
             int val = reversedFiles.front();
             reversedFiles.pop_front();
             newDisk.push_back(val);
-            ++forwardIt;
-            --backwardIt;
-            if(forwardIt >= backwardIt)break;            
+            ++index;
+            if(index >= sumFileSize - 1) break;            
         }
         ++i;
     }
 
-    printVector(newDisk);
+    for(i = 0; i < newDisk.size(); ++i)
+        total += i * newDisk[i];
+    
+    t.endTimer();
 
-    msg(total);
+    msg(total,"      in", t.getElapsed(),"ms");
     return 0;
 }
