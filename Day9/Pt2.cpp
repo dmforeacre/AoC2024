@@ -10,11 +10,16 @@ struct Block
 {
     int value;
     int size;
+    bool used;
 
-    Block(int v, int s)
+    Block()
+    {}
+
+    Block(int v, int s, bool u)
     {
         value = v;
         size = s;
+        used = u;
     }
 };
 
@@ -23,40 +28,71 @@ int main()
     std::string text;
     std::fstream inFile("test.txt");
 
-    std::vector<Block> usedBlocks, freeBlocks;
+    std::list<Block> blocks;
 
     Timer t;
     t.startTimer();
 
     long total = 0;
     getline(inFile, text);
+    inFile.close();
 
     int diskSize = 0;
     for(int i = 0; i < text.size(); ++i)
     {
         diskSize += text[i] - 48;
+        Block b;
+        b.value = i / 2;
+        b.size = text[i] - 48;
         if(i%2 == 0)
-            usedBlocks.push_back(Block(i / 2, text[i] - 48));
+            b.used = true;
         else
-            freeBlocks.push_back(Block(i / 2, text[i] - 48));
+        {
+            b.used = false;
+            b.value = -1;
+        }
+        blocks.push_back(b);
     }
 
-    inFile.close();
-
-    std::vector<int> disk = std::vector<int>(diskSize);
-
-    int i = 0;
-    int index = 0;
-    while(i < diskSize)
+    for(auto backIt = blocks.rbegin(); backIt != blocks.rend(); ++backIt)
     {
-        for(int j = 0; j < usedBlocks[index].size; ++j)
+        Block block = *backIt;
+        if(block.used == false) continue;
+
+        msg("   Checking Block",block.value,block.size);
+        bool isPlaced = false;
+        auto frontIt = blocks.begin();
+        while(!isPlaced && frontIt != blocks.end())
         {
-            disk[i] = usedBlocks[index].value;
-            ++i;
+            Block freeBlock = *frontIt;
+            if(freeBlock.used)
+            {
+                ++frontIt;
+                continue;
+            }
+            msg("           Block Size:",block.size,"Free Space:",freeBlock.size);
+            if(block.size <= freeBlock.size)
+            {
+                Block b = Block(block.value, block.size, block.used);
+                msg("       Placed block");
+                blocks.insert(frontIt, b);
+                frontIt->size -= block.size;
+                msg("Forward it:", backIt.base()->size, "Backward it:", backIt->size);
+                blocks.erase(backIt.base());
+                msg("       Removed block");
+                isPlaced = true;
+            }
+            ++frontIt;
         }
-        for(int j = 0; j < freeBlocks[index].size; ++j)
+    }
+    std::vector<int> disk = std::vector<int>(diskSize);
+    int diskIndex = 0;
+    for(Block b : blocks)
+    {
+        for(int i = 0; i < b.size; ++i)
         {
-            ++i;
+            disk[diskIndex] = b.value;
+            ++diskIndex;
         }
     }
     
