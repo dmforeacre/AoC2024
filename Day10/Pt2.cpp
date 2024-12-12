@@ -3,131 +3,65 @@
 #include <string>
 #include <vector>
 #include <numeric>
+#include <list>
 #include "../Utils.h"
 
-struct Block
+void traverse(std::vector<std::vector<int>>& grid, int& total, Point p)
 {
-    std::string value;
-    int size;
-    int index;
+    if(p.at(grid) == 9)
+    {
+        ++total;
+        return;
+    }
 
-    Block()
-    {}
-};
+    Point up = Point(p.x, p.y-1);
+    Point down = Point(p.x, p.y+1);
+    Point left = Point(p.x-1, p.y);
+    Point right = Point(p.x+1, p.y);
+    if(up.isValid(grid) && up.at(grid) == p.at(grid) + 1)
+        traverse(grid, total, up);
+    if(down.isValid(grid) && down.at(grid) == p.at(grid) + 1)
+        traverse(grid, total, down);
+    if(left.isValid(grid) && left.at(grid) == p.at(grid) + 1)
+        traverse(grid, total, left);
+    if(right.isValid(grid) && right.at(grid) == p.at(grid) + 1)
+        traverse(grid, total, right);
+}
 
 int main()
 {
     std::string text;
     std::fstream inFile("input.txt");
 
-    std::vector<Block> fileBlocks, openBlocks;
-
     Timer t;
     t.startTimer();
 
-    long long total = 0;
-    getline(inFile, text);
+    int total = 0;
+    std::vector<std::vector<int>> grid;
+    std::vector<Point> trailheads;
+
+    int row = 0;
+    while(!inFile.eof())
+    {
+        getline(inFile, text);
+        std::vector<int> line;
+        int col = 0;
+        for(int i = 0; i < text.size(); ++i)
+        {
+            if(text[i] - 48 == 0)
+                trailheads.push_back(Point(col, row));
+            line.push_back(text[i] - 48);
+            ++col;
+        }
+        grid.push_back(line);
+        ++row;
+    }
+
     inFile.close();
 
-    int diskSize = 0;
-    for(int i = 0; i < text.size(); ++i)
-    {
-        diskSize += text[i] - 48;
-        Block b;
-        b.size = text[i] - 48;
-        if(i%2 == 0)
-        {
-            b.value = std::to_string(i / 2);
-            fileBlocks.push_back(b);
-        }
-        else
-        {
-            b.value = ".";
-            openBlocks.push_back(b);
-        }
-        /*for(int j = 0; j < text[i] - 48; ++j)
-        {
-            if(i%2 == 0)
-                disk.push_back(i/2 + 48);
-            else
-                disk.push_back('.');
-        }*/
-    }
-
-
-    std::vector<std::string> disk = std::vector<std::string>(diskSize);
-    int i = 0;
-    int count = 0;
-    while(i < diskSize)
-    {
-        fileBlocks[count].index = i;
-        for(int j = 0; j < fileBlocks[count].size; ++j)
-        {
-            disk[i] = fileBlocks[count].value;
-            ++i;
-        }
-        if(i >= diskSize) break;
-        openBlocks[count].index = i;
-        for(int j = 0; j < openBlocks[count].size; ++j)
-        {
-            disk[i] = '.';
-            ++i;
-        }
-        ++count;
-    }
-
-    for(int i = fileBlocks.size() - 1; i >= 0; --i)
-    {
-        int j = 0;
-        bool isPlaced = false;
-        while(!isPlaced && j < openBlocks.size())
-        {
-            if(fileBlocks[i].size <= openBlocks[j].size)
-            {
-                for(int k = 0; k < fileBlocks[i].size; ++k)
-                {
-                    disk[openBlocks[j].index + k] = fileBlocks[i].value;
-                    disk[fileBlocks[i].index + k] = '.';
-                }
-                openBlocks[j].size -= fileBlocks[i].size;
-                openBlocks[j].index += fileBlocks[i].size;
-                isPlaced = true;
-            }
-            ++j;
-        }
-    }
-
-    /*for(auto rIt = fileBlocks.rbegin(); rIt != fileBlocks.rend(); ++rIt)
-    {
-        bool isPlaced = false;
-        auto it = blocks.begin();
-        while(!isPlaced && it != blocks.end())
-        {
-            if(!it->open && it->size >= rIt->size)
-            {
-                it->size -= rIt->size;
-                blocks.insert(it, *(rIt.base()));
-                isPlaced = true;
-            }
-
-            ++it;
-        }
-    }*/
-
-    /*std::vector<char> disk = std::vector<char>(diskSize);
-    for(Block b : blocks)
-    {
-        for(int i = 0; i < b.size - 48; ++i)
-            disk[i] = b.value;
-    }*/
-    //printVector(disk);
-    for(int i = 0; i < disk.size(); ++i)
-    {
-        msg(i, disk[i], total);
-        if(disk[i] != ".")
-            total += std::stoi(disk[i]) * i;
-    }
-
+    for(Point p : trailheads)
+        traverse(grid, total, p);
+    
     t.endTimer();
 
     msg(total,"      in", t.getElapsed(),"ms");
