@@ -53,6 +53,18 @@ class Point
             y = Y;
         }
 
+        template <typename T>
+        T at(std::vector<std::vector<T>>& grid)
+        {
+            return grid[y][x];
+        }
+
+        template <typename T>
+        bool isValid(std::vector<std::vector<T>>& grid)
+        {
+            return x >= 0 && y >= 0 && x < grid[y].size() && y < grid.size();
+        }
+
         Point operator +(const Point& right)
         {
             return Point(x + right.x, y + right.y);
@@ -127,11 +139,12 @@ void printVector(std::vector<T>& vec)
     std::cout << "\n";
 }
 
-void printGrid(std::vector<std::vector<char>>& grid)
+template <typename T>
+void printGrid(std::vector<std::vector<T>>& grid)
 {
-    for(std::vector<char> line : grid)
+    for(std::vector<T> line : grid)
     {
-        for(char c : line)
+        for(T c : line)
         {
             std::cout << c << " ";
         }
