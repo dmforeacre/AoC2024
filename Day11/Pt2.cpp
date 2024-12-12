@@ -6,28 +6,6 @@
 #include <list>
 #include "../Utils.h"
 
-void traverse(std::vector<std::vector<int>>& grid, int& total, Point p)
-{
-    if(p.at(grid) == 9)
-    {
-        ++total;
-        return;
-    }
-
-    Point up = Point(p.x, p.y-1);
-    Point down = Point(p.x, p.y+1);
-    Point left = Point(p.x-1, p.y);
-    Point right = Point(p.x+1, p.y);
-    if(up.isValid(grid) && up.at(grid) == p.at(grid) + 1)
-        traverse(grid, total, up);
-    if(down.isValid(grid) && down.at(grid) == p.at(grid) + 1)
-        traverse(grid, total, down);
-    if(left.isValid(grid) && left.at(grid) == p.at(grid) + 1)
-        traverse(grid, total, left);
-    if(right.isValid(grid) && right.at(grid) == p.at(grid) + 1)
-        traverse(grid, total, right);
-}
-
 int main()
 {
     std::string text;
@@ -37,30 +15,35 @@ int main()
     t.startTimer();
 
     int total = 0;
-    std::vector<std::vector<int>> grid;
-    std::vector<Point> trailheads;
 
-    int row = 0;
-    while(!inFile.eof())
+    getline(inFile, text);
+
+    std::vector<std::string> split = splitString(text);
+    std::list<long> stones;
+    for(std::string s : split)
+        stones.push_back(std::stol(s));
+
+    for(int i = 0; i < 75; ++i)
     {
-        getline(inFile, text);
-        std::vector<int> line;
-        int col = 0;
-        for(int i = 0; i < text.size(); ++i)
+        for(auto it = stones.begin(); it != stones.end(); ++it)
         {
-            if(text[i] - 48 == 0)
-                trailheads.push_back(Point(col, row));
-            line.push_back(text[i] - 48);
-            ++col;
+            std::string str = std::to_string(*it);
+            if(*it == 0)
+                *it = 1;
+            else if(str.size() % 2 == 0)
+            {
+                stones.insert(it, std::stol(str.substr(0, str.length() / 2)));
+                *it = std::stol(str.substr(str.length() / 2, str.length() / 2));
+            }
+            else
+            {
+                *it *= 2024;
+            }
         }
-        grid.push_back(line);
-        ++row;
+
     }
 
-    inFile.close();
-
-    for(Point p : trailheads)
-        traverse(grid, total, p);
+    total = stones.size();
     
     t.endTimer();
 
