@@ -3,37 +3,29 @@
 #include <string>
 #include <vector>
 #include <numeric>
-#include <list>
 #include "../Utils.h"
 
 struct Block
 {
-    int value;
+    std::string value;
     int size;
-    bool used;
+    int index;
 
     Block()
     {}
-
-    Block(int v, int s, bool u)
-    {
-        value = v;
-        size = s;
-        used = u;
-    }
 };
 
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
-    std::list<Block> blocks;
+    std::vector<Block> fileBlocks, openBlocks;
 
     Timer t;
     t.startTimer();
 
-    long total = 0;
+    long long total = 0;
     getline(inFile, text);
     inFile.close();
 
@@ -42,61 +34,99 @@ int main()
     {
         diskSize += text[i] - 48;
         Block b;
-        b.value = i / 2;
         b.size = text[i] - 48;
         if(i%2 == 0)
-            b.used = true;
+        {
+            b.value = std::to_string(i / 2);
+            fileBlocks.push_back(b);
+        }
         else
         {
-            b.used = false;
-            b.value = -1;
+            b.value = ".";
+            openBlocks.push_back(b);
         }
-        blocks.push_back(b);
+        /*for(int j = 0; j < text[i] - 48; ++j)
+        {
+            if(i%2 == 0)
+                disk.push_back(i/2 + 48);
+            else
+                disk.push_back('.');
+        }*/
     }
 
-    for(auto backIt = blocks.rbegin(); backIt != blocks.rend(); ++backIt)
-    {
-        Block block = *backIt;
-        if(block.used == false) continue;
 
-        msg("   Checking Block",block.value,block.size);
-        bool isPlaced = false;
-        auto frontIt = blocks.begin();
-        while(!isPlaced && frontIt != blocks.end())
+    std::vector<std::string> disk = std::vector<std::string>(diskSize);
+    int i = 0;
+    int count = 0;
+    while(i < diskSize)
+    {
+        fileBlocks[count].index = i;
+        for(int j = 0; j < fileBlocks[count].size; ++j)
         {
-            Block freeBlock = *frontIt;
-            if(freeBlock.used)
+            disk[i] = fileBlocks[count].value;
+            ++i;
+        }
+        if(i >= diskSize) break;
+        openBlocks[count].index = i;
+        for(int j = 0; j < openBlocks[count].size; ++j)
+        {
+            disk[i] = '.';
+            ++i;
+        }
+        ++count;
+    }
+
+    for(int i = fileBlocks.size() - 1; i >= 0; --i)
+    {
+        int j = 0;
+        bool isPlaced = false;
+        while(!isPlaced && j < openBlocks.size())
+        {
+            if(fileBlocks[i].size <= openBlocks[j].size)
             {
-                ++frontIt;
-                continue;
-            }
-            msg("           Block Size:",block.size,"Free Space:",freeBlock.size);
-            if(block.size <= freeBlock.size)
-            {
-                Block b = Block(block.value, block.size, block.used);
-                msg("       Placed block");
-                blocks.insert(frontIt, b);
-                frontIt->size -= block.size;
-                msg("Forward it:", backIt.base()->size, "Backward it:", backIt->size);
-                blocks.erase(backIt.base());
-                msg("       Removed block");
+                for(int k = 0; k < fileBlocks[i].size; ++k)
+                {
+                    disk[openBlocks[j].index + k] = fileBlocks[i].value;
+                    disk[fileBlocks[i].index + k] = '.';
+                }
+                openBlocks[j].size -= fileBlocks[i].size;
+                openBlocks[j].index += fileBlocks[i].size;
                 isPlaced = true;
             }
-            ++frontIt;
+            ++j;
         }
     }
-    std::vector<int> disk = std::vector<int>(diskSize);
-    int diskIndex = 0;
+
+    /*for(auto rIt = fileBlocks.rbegin(); rIt != fileBlocks.rend(); ++rIt)
+    {
+        bool isPlaced = false;
+        auto it = blocks.begin();
+        while(!isPlaced && it != blocks.end())
+        {
+            if(!it->open && it->size >= rIt->size)
+            {
+                it->size -= rIt->size;
+                blocks.insert(it, *(rIt.base()));
+                isPlaced = true;
+            }
+
+            ++it;
+        }
+    }*/
+
+    /*std::vector<char> disk = std::vector<char>(diskSize);
     for(Block b : blocks)
     {
-        for(int i = 0; i < b.size; ++i)
-        {
-            disk[diskIndex] = b.value;
-            ++diskIndex;
-        }
+        for(int i = 0; i < b.size - 48; ++i)
+            disk[i] = b.value;
+    }*/
+    //printVector(disk);
+    for(int i = 0; i < disk.size(); ++i)
+    {
+        msg(i, disk[i], total);
+        if(disk[i] != ".")
+            total += std::stoi(disk[i]) * i;
     }
-    
-    printVector(disk);
 
     t.endTimer();
 
