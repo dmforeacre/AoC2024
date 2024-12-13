@@ -99,7 +99,6 @@ class Point
             return out;
         }
 };
-
 template<typename T>
 struct Node
 {
