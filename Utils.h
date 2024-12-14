@@ -28,7 +28,8 @@ class Timer
         double endTimer()
         {
             end = std::chrono::high_resolution_clock::now();
-            elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            double nsElapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+            elapsed = nsElapsed / 1000000;
             return elapsed;
         }
 
