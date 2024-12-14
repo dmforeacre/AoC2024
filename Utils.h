@@ -56,7 +56,10 @@ class Point
         template <typename T>
         T at(std::vector<std::vector<T>>& grid)
         {
-            return grid[y][x];
+            if(this->isValid(grid))
+                return grid[y][x];
+            else
+                return '-';
         }
 
         template <typename T>

@@ -4,29 +4,76 @@
 #include <vector>
 #include <numeric>
 #include <list>
-#include <map>
-#include <cmath>
 #include "../Utils.h"
 
-std::tuple<long, long> blink(std::list<long>::iterator it)
+bool find(std::vector<Point>& ptList, Point p)
 {
-    long first = -1;
-    long second = -1;
-    int strSize = std::to_string(*it).size();
-    int power = pow(10, strSize / 2);     
-    if(*it == 0)
-        first = 1;
-    else if(strSize % 2 == 0)
-    {
-        first = *it % power;
-        second = *it / power;
-    }
-    else
-    {
-        first = *it * 2024;
-    }
+    for(Point pt : ptList)
+        if(pt == p)
+            return true;
+    return false;
+}
 
-    return std::tuple<long, long>(first, second);
+bool isSame(std::vector<std::vector<char>>& grid, Point p1, Point p2)
+{
+    return p1.at(grid) == p2.at(grid);
+}
+
+// Takes a point p and three consecutive points going around a corner of it
+bool hasVertex(std::vector<std::vector<char>>& grid, Point p, Point p1, Point p2, Point p3)
+{
+    // Check if the two sides are different for concave vertex
+    if(!isSame(grid, p, p1) && !isSame(grid, p, p3))
+        return true;
+    // Can't be concave if both sides are off the grid
+    if(!p1.isValid(grid) || !p3.isValid(grid))
+        return false;
+    // Check if both sides are same as point with a different diagonal
+    if((isSame(grid, p, p1) && isSame(grid, p, p3) && !isSame(grid, p, p2)))
+        return true;
+
+    return false;
+}
+
+void expand(std::vector<std::vector<char>>& grid, std::vector<Point>& visited, Point p, std::pair<int, int>& values)
+{
+    if(!find(visited, p))
+        visited.push_back(p);
+    else
+        return;
+    ++values.first;
+    Point up = Point(p.x,p.y-1);
+    Point down = Point(p.x,p.y+1);
+    Point left = Point(p.x-1,p.y);
+    Point right = Point(p.x+1,p.y);
+    Point UL = Point(p.x-1,p.y-1);
+    Point UR = Point(p.x+1,p.y-1);
+    Point LL = Point(p.x-1,p.y+1);
+    Point LR = Point(p.x+1,p.y+1);
+    if(hasVertex(grid, p, up, UL, left))
+        ++values.second;
+    if(hasVertex(grid, p, up, UR, right))
+        ++values.second;
+    if(hasVertex(grid, p, down, LR, right))
+        ++values.second;
+    if(hasVertex(grid, p, down, LL, left))
+        ++values.second;
+    if(up.isValid(grid) && isSame(grid, up, p) && !find(visited, up))
+    {
+        expand(grid, visited, up, values);
+    }
+    if(down.isValid(grid) && isSame(grid, down, p) && !find(visited, down))
+    {
+        expand(grid, visited, down, values);
+    }
+    if(left.isValid(grid) && isSame(grid, left, p) && !find(visited, left))
+    {
+        expand(grid, visited, left, values);
+    }
+    if(right.isValid(grid) && isSame(grid, right, p) && !find(visited, right))
+    {
+        expand(grid, visited, right, values);
+    }
 }
 
 int main()
@@ -39,38 +86,41 @@ int main()
 
     int total = 0;
 
-    getline(inFile, text);
-
-    std::vector<std::string> split = splitString(text);
-    std::list<long> stones;
-    std::map<long, std::tuple<long, long>> memo;
-    for(std::string s : split)
-        stones.push_back(std::stoi(s));
-
-    for(int i = 0; i < 55; ++i)
+    std::vector<std::vector<char>> grid;
+    // each plot pair is Area, Verticies
+    std::list<std::pair<int, int>> plots;
+    while(!inFile.eof())
     {
-        for(auto it = stones.begin(); it != stones.end(); ++it)
-        {   
-            std::tuple<long,long> results;
-            if(memo.find(*it) == memo.end())
-            {
-                results = blink(it);
-                memo.emplace(*it, results);
-            }
-            else
-            {
-                results = memo[*it];
-            }
+        std::vector<char> line;
+        getline(inFile, text);
+        for(char c : text)
+        {
+            line.push_back(c);
+        }
+        grid.push_back(line);
+    }
 
-            int first = std::get<0>(results);
-            int second = std::get<1>(results);
-            *it = first;
-            if(second != -1)
-                stones.insert(it, second);
+    std::vector<Point> visited;
+
+    for(int i = 0; i < grid.size(); ++i)
+    {
+        for(int j = 0; j < grid[i].size(); ++j)
+        {
+            if(!find(visited, Point(j, i)))
+            {
+                std::pair<int, int> plot;
+                expand(grid, visited, Point(j, i), plot);
+                plots.push_back(plot);
+            }
         }
     }
 
-    total = stones.size();
+    for(std::pair<int, int> p : plots)
+    {
+        total += p.first * p.second;
+    }
+
+    inFile.close();    
     
     t.endTimer();
 
