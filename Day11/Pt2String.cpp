@@ -4,20 +4,21 @@
 #include <vector>
 #include <numeric>
 #include <list>
-#include <unordered_map>
+#include <map>
 #include <cmath>
 #include "../Utils.h"
 
-std::list<long> fullyExpand(long num)
+std::map<std::string, std::string> memo;
+
+std::string blink(std::string num)
 {
-    std::list<long> stones;
-    int strSize = std::to_string(num).size();
-    int power = pow(10, strSize / 2); 
-    if(num == 0)
+    //msg("           Blinking",num);
+    int strSize = num.size();
+    int power = pow(10, strSize / 2);     
+    if(std::stol(num) == 0)
     {
         //msg("               Returning to 1");
-        stones.push_front(1);
-        return stones;
+        return "1";
     }
     else if(strSize % 2 == 0)
     {
@@ -31,13 +32,6 @@ std::list<long> fullyExpand(long num)
         //msg("               Multiply by 2024:", std::stoi(num) * 2024);
         return std::to_string(std::stol(num) * 2024);
     }
-}
-
-void blink(std::list<long>& stones, std::unordered_map<long, std::list<long>>& memo)
-{
-    //msg("           Blinking",num);
-    
-    
 }
 
 int main()

@@ -135,7 +135,7 @@ std::vector<std::string> splitString(std::string str, char delimiter)
 }
 
 template<class T>
-void printVector(std::vector<T>& vec)
+void printVector(std::vector<T> vec)
 {
     for(T t : vec)
         std::cout << t << " ";
