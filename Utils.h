@@ -97,6 +97,9 @@ class Point
         {
             return x == right.x && y == right.y;
         }
+
+        //auto operator <=> (Point const&) const noexcept = default;
+
         friend std::ostream& operator<<(std::ostream& out, const Point& p)
         { 
             out << "(" << p.x << "," << p.y << ")";

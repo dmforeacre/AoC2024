@@ -4,11 +4,18 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <queue>
+#include <functional>
+#include <tuple>
 #include "../Utils.h"
 
-int cost(Point dir, Point first, Point second)
+// Points are direction, start, end
+using Move = std::tuple<Point, Point, Point>;
+
+int cost(Move m)
 {
-    Point turns = (second - first) - dir;
+
+    Point turns = (std::get<2>(m) - std::get<1>(m)) - std::get<0>(m);
     return (std::max(abs(turns.x), abs(turns.y)) * 1000) + 1;
 }
 
@@ -71,19 +78,39 @@ int main()
     }
     
     Point direction(1,0);
-    std::vector<Point> visited, toVisit;
+    using toVisit = std::vector<Move>;
+    std::vector<Point> visited, path;
+    auto comparitor = [](const Move& m1, const Move& m2){
+        return cost(m1) < cost (m2);
+    };
+    std::priority_queue<Move, toVisit, decltype(comparitor)> toVisitQueue{comparitor};
+
     Point current = start;
     do
-    {    
+    {
+        path.push_back(current);
         visited.push_back(current);
         for(Point p : getNeighbors(map, current))
             if(std::find(visited.begin(), visited.end(), p) == visited.end())
-                toVisit.push_back(p);
-        current = toVisit.back();
-        toVisit.pop_back();        
-    } while (!(current == end) && toVisit.size() > 0);
+            {
+                Move m = {direction, current, p};
+                toVisitQueue.push(m);
+            }
+        Move nextMove = toVisitQueue.top();
+        current = std::get<2>(nextMove);
+        direction = current - std::get<1>(nextMove);
+        toVisitQueue.pop(); 
+    } while (!(current == end) && toVisitQueue.size() > 0);
     
-    msg(current);
+    for(Point p : path)
+        map[p.y][p.x] = 'X';
+
+    for(auto l : map)
+    {
+        for(char c : l)
+            std::cout << c;
+        std::cout << std::endl;
+    }
 
     t.endTimer();
 
