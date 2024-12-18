@@ -103,7 +103,7 @@ int main()
     } while (!(current == end) && toVisitQueue.size() > 0);
     
     for(Point p : path)
-        map[p.y][p.x] = 'X';
+        msg(p);
 
     for(auto l : map)
     {
