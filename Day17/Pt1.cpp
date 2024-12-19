@@ -21,12 +21,12 @@ int getOperand(std::vector<int>& registers, int operand)
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     Timer t;
     t.startTimer();
 
-    int total = 0;
+    std::string total = "";
     std::vector<std::string> tokens;
     std::vector<int> registers;
 
@@ -80,7 +80,15 @@ int main()
         }
         iptr += 2;
     }
+    for(int i : output)
+        std::cout << i << ',';
+    std::cout << std::endl;
  
+    for(int i = 0; i < output.size() - 1; ++i)
+    {
+        total += std::to_string(output[i]) + ',';
+    }
+    total += std::to_string(output.back());
     t.endTimer();
 
     msg(total,"      in", t.getElapsed(),"ms");
