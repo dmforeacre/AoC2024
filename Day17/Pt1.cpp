@@ -47,6 +47,7 @@ int main()
 
     int iptr = 0;
 
+    std::vector<int> output;
     while(iptr < instructions.size())
     {
         switch(instructions[iptr])
@@ -65,17 +66,16 @@ int main()
                     iptr = instructions[iptr + 1] - 2;
                 break;
             case 4:
-
+                registers[1] = registers[1] ^ registers[2];
                 break;
             case 5:
-
+                output.push_back(getOperand(registers, instructions[iptr + 1]) % 8);
                 break;
             case 6:
-
+                registers[1] = registers[0] / pow(2, getOperand(registers, instructions[iptr + 1]));
                 break;
-
             case 7:
-
+                registers[2] = registers[0] / pow(2, getOperand(registers, instructions[iptr + 1]));
                 break;
         }
         iptr += 2;
