@@ -19,24 +19,6 @@ int cost(Move m)
     return (std::max(abs(turns.x), abs(turns.y)) * 1000) + 1 + std::get<3>(m);
 }
 
-std::vector<Point> getNeighbors(std::vector<std::vector<char>>& map, Point p)
-{
-    std::vector<Point> neighbors;
-    Point up = p + Point(0,-1);
-    Point down = p + Point(0, 1);
-    Point left = p + Point(-1, 0);
-    Point right = p + Point(1, 0);
-    if(up.isValid(map) && up.at(map) == '.')
-        neighbors.push_back(up);
-    if(down.isValid(map) && down.at(map) == '.')
-        neighbors.push_back(down);
-    if(left.isValid(map) && left.at(map) == '.')
-        neighbors.push_back(left);
-    if(right.isValid(map) && right.at(map) == '.')
-        neighbors.push_back(right);
-    return neighbors;
-}
-
 int main()
 {
     std::string text;

@@ -138,19 +138,19 @@ std::vector<std::string> splitString(std::string str, char delimiter)
 }
 
 template<class T>
-void printVector(std::vector<T> vec)
+void printVector(std::vector<T>& vec)
 {
     for(T t : vec)
         std::cout << t << " ";
     std::cout << "\n";
 }
 
-template <typename T>
-void printGrid(std::vector<std::vector<T>>& grid)
+//template<class T>
+void printGrid(std::vector<std::vector<char>>& grid)
 {
-    for(std::vector<T> line : grid)
+    for(std::vector<char> line : grid)
     {
-        for(T c : line)
+        for(char c : line)
         {
             std::cout << c << " ";
         }
