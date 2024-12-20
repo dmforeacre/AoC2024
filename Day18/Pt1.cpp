@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include "../Utils.h"
+#include "../AStar.h"
 
 const int SIZE = 6;
 const int MAX_BYTES = 12;
@@ -43,8 +44,8 @@ int main()
 
     printGrid(map);
 
-    //std::list<Point> path = getPath(map, Point(0,0), Point(SIZE - 1, SIZE - 1));
-    //total = path.size();
+    std::list<Point> path = getPath(map, Point(0,0), Point(SIZE - 1, SIZE - 1));
+    total = path.size();
 
     t.endTimer();
 
