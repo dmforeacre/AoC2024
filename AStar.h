@@ -3,7 +3,7 @@
 #include <list>
 #include <cmath>
 #include <algorithm>
-#include <Utils.h>
+//#include "Utils.h"
 
 using Move = std::tuple<Point, int>;
 
@@ -36,12 +36,12 @@ std::list<Point> getPath(std::vector<std::vector<char>>& map, Point start, Point
 {
     end = e;
     using toVisit = std::vector<Move>;
-    std::vector<Move> visited;
+    std::vector<Point> visited;
     auto comparitor = [](const Move& m1, const Move& m2)
     {
         return cost(std::get<0>(m1)) < cost(std::get<0>(m2));
     };
-    std::priority_queue<Move, toVisit> toVisitQueue;
+    std::priority_queue<Move, toVisit, decltype(comparitor)> toVisitQueue{comparitor};
 
     Move current = Move{start, 0};
     toVisitQueue.push(current);
@@ -49,16 +49,14 @@ std::list<Point> getPath(std::vector<std::vector<char>>& map, Point start, Point
     {
         current = toVisitQueue.top();
         toVisitQueue.pop();
-        //msg("   Checking point, direction, cost:", current, direction, total);
-        visited.push_back(current);
+        msg("   Checking point, cost:", std::get<0>(current), std::get<1>(current));
+        visited.push_back(std::get<0>(current));
         std::vector<Point> neighbors = getNeighbors(map, std::get<0>(current));
-        //(neighbors.empty())
-        //    path.pop_back();
         while(!neighbors.empty())
         {
             Move m = {neighbors.back(), std::get<1>(current) + 1};
             neighbors.pop_back();
-            if(std::find(visited.begin(), visited.end(), m) == visited.end())
+            if(std::find(visited.begin(), visited.end(), std::get<0>(m)) == visited.end())
                 toVisitQueue.push(m);
         }
         if(toVisitQueue.empty())
@@ -69,12 +67,12 @@ std::list<Point> getPath(std::vector<std::vector<char>>& map, Point start, Point
 
     } while (!(std::get<0>(current) == end));
     std::list<Point> path;
-    Move p;
+    Point p;
     do
     {
         p = visited.back();
-        path.push_front(std::get<0>(p));
+        path.push_front(p);
         visited.pop_back();
-    }while(!(std::get<0>(p) == start));
+    }while(!(p == start));
     return path;
 }

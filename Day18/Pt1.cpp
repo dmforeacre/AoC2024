@@ -45,7 +45,10 @@ int main()
     printGrid(map);
 
     std::list<Point> path = getPath(map, Point(0,0), Point(SIZE - 1, SIZE - 1));
+    for(Point p : path)
+        map[p.y][p.x] = 'X';
     total = path.size();
+    printGrid(map);
 
     t.endTimer();
 
