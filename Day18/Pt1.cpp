@@ -45,18 +45,18 @@ int main()
 
     //printGrid(map);
 
-    int pathLen = getPath(map, Point(0,0), Point(SIZE, SIZE));
-    /*for(Point p : path)
+    std::vector<Point> path = getPath(map, Point(0,0), Point(SIZE, SIZE));
+    for(Point p : path)
     {
         //msg(p);
         map[p.y][p.x] = 'X';
     }
-    total = path.size();*/
+    total = path.size();
     
     //printGrid(map);
 
     t.endTimer();
 
-    msg(pathLen,"      in", t.getElapsed(),"ms");
+    msg(total,"      in", t.getElapsed(),"ms");
     return 0;
 }

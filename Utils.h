@@ -93,11 +93,6 @@ class Point
             return *this;
         }
 
-        bool operator==(const Point& right) const
-        {
-            return x == right.x && y == right.y;
-        }
-
         //auto operator <=> (Point const&) const noexcept = default;
 
         friend std::ostream& operator<<(std::ostream& out, const Point& p)
@@ -106,6 +101,11 @@ class Point
             return out;
         }
 };
+
+bool operator==(const Point& left, const Point& right)
+{
+    return left.x == right.x && left.y == right.y;
+}
 
 std::vector<std::string> splitString(std::string str)
 {

@@ -14,7 +14,7 @@ class Move
 {
     public:
         Point point;
-        Move* prev;
+        const Move* prev;
         float fCost;
         float gCost;
         float hCost;
@@ -40,7 +40,7 @@ class Move
     }
 };
 
-bool operator==(const Move m1, const Move m2)
+bool operator==(const Move& m1, const Move& m2)
 {
     return m1.point == m2.point;
 }
@@ -63,7 +63,7 @@ std::vector<Point> getNeighbors(std::vector<std::vector<char>>& map, Point p)
     return neighbors;
 }
 
-int getPath(std::vector<std::vector<char>>& map, Point start, Point end)
+std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Point end)
 {
     endPoint = end;
     using toVisit = std::vector<Move>;
@@ -72,43 +72,40 @@ int getPath(std::vector<std::vector<char>>& map, Point start, Point end)
         return m1.fCost > m2.fCost;
     };
     std::vector<Move> closed;
-    std::priority_queue<Move, toVisit, decltype(comparitor)> open{comparitor};
+    std::priority_queue<Move, toVisit, decltype(comparitor)> open(comparitor);
 
-    Move current;
+    const Move* current;
     open.push(Move(start));
     do
     {
-        current = open.top();
+        current = &open.top();
         //msg("At",current.point,"Cost:",current.fCost);
         open.pop();
-        closed.push_back(current);
+        closed.push_back(*current);
+        const Move* prev = new Move(*current);
 
-        std::vector<Point> neighbors = getNeighbors(map, current.point);
+        std::vector<Point> neighbors = getNeighbors(map, current->point);
         
         for(Point n : neighbors)
         {
-            Move m = new Move(n);
+            Move m(n);
             if(std::find(closed.begin(), closed.end(), m) != closed.end())
                 continue;
-
-            m.prev = &current;
-            m.gCost = current.gCost + 1;
+            //msg("Adding Point:",n,"Prev:",current->point);
+            m.prev = prev;
+            m.gCost = current->gCost + 1;
             m.hCost = getHCost(n);
             m.fCost = m.gCost + m.hCost;            
             open.push(m);
         }
-
-    } while(!(current.point == end));
+    } while(!(current->point == end));
     std::vector<Point> path;
-    /*while(current.prev != nullptr)
+    while(current->prev != nullptr)
     {
-        path.push_back(current.point);
-        current = current.prev;
-    }*/
-    for(Move m : closed)
-    {
-        msg(m.point, m.gCost);
+        //msg("Point:",current->point,"Prev:",current->prev,current->prev->point);
+        path.push_back(current->point);
+        current = current->prev;
     }
-
-    return current.gCost;
+    std::reverse(path.begin(), path.end());
+    return path;
 }
