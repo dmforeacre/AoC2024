@@ -1,9 +1,49 @@
 #include <vector>
 #include <queue>
-#include <list>
+#include <cmath>
 #include <algorithm>
-#include <Utils.h>
 
+Point endPoint;
+
+float getHCost(Point p)
+{
+    return sqrt(pow(p.x - endPoint.x, 2) + pow(p.y - endPoint.y, 2));
+}
+
+class Move
+{
+    public:
+        Point point;
+        Move* prev;
+        float fCost;
+        float gCost;
+        float hCost;
+
+    Move(){}
+
+    Move(Point p)
+    {
+        point = p;
+        prev = nullptr;
+        gCost = 0;
+        hCost = getHCost(p);
+        fCost = hCost;
+    }
+
+    Move(Move* m)
+    {
+        point = m->point;
+        prev = m->prev;
+        fCost = m->fCost;
+        gCost = m->gCost;
+        hCost = m->hCost;
+    }
+};
+
+bool operator==(const Move m1, const Move m2)
+{
+    return m1.point == m2.point;
+}
 
 std::vector<Point> getNeighbors(std::vector<std::vector<char>>& map, Point p)
 {
@@ -23,43 +63,52 @@ std::vector<Point> getNeighbors(std::vector<std::vector<char>>& map, Point p)
     return neighbors;
 }
 
-std::list<Point> getPath(std::vector<std::vector<char>>& map, Point start, Point end)
+int getPath(std::vector<std::vector<char>>& map, Point start, Point end)
 {
-    using toVisit = std::vector<Point>;
-    std::vector<Point> visited;
-    std::priority_queue<Point, toVisit> toVisitQueue;
+    endPoint = end;
+    using toVisit = std::vector<Move>;
+    auto comparitor = [](const Move& m1, const Move& m2)
+    {
+        return m1.fCost > m2.fCost;
+    };
+    std::vector<Move> closed;
+    std::priority_queue<Move, toVisit, decltype(comparitor)> open{comparitor};
 
-    Point current = start;
-    toVisitQueue.push(current);
+    Move current;
+    open.push(Move(start));
     do
     {
-        current = toVisitQueue.top();
-        toVisitQueue.pop();
-        //msg("   Checking point, direction, cost:", current, direction, total);
-        visited.push_back(current);
-        std::vector<Point> neighbors = getNeighbors(map, current);
-        //(neighbors.empty())
-        //    path.pop_back();
-        while(!neighbors.empty())
+        current = open.top();
+        //msg("At",current.point,"Cost:",current.fCost);
+        open.pop();
+        closed.push_back(current);
+
+        std::vector<Point> neighbors = getNeighbors(map, current.point);
+        
+        for(Point n : neighbors)
         {
-            Point p = neighbors.back();
-            neighbors.pop_back();
-            if(std::find(visited.begin(), visited.end(), p) == visited.end())
-                toVisitQueue.push(p);
-        }
-        if(toVisitQueue.empty())
-        {
-            //msg("Out of moves");
-            break;
+            Move m = new Move(n);
+            if(std::find(closed.begin(), closed.end(), m) != closed.end())
+                continue;
+
+            m.prev = &current;
+            m.gCost = current.gCost + 1;
+            m.hCost = getHCost(n);
+            m.fCost = m.gCost + m.hCost;            
+            open.push(m);
         }
 
-    } while (!(current == end));
-    std::list<Point> path;
-    do
+    } while(!(current.point == end));
+    std::vector<Point> path;
+    /*while(current.prev != nullptr)
     {
-        Point p = visited.back();
-        path.push_front(p);
-        visited.pop_back();
-    }while(!(visited.back() == start));
-    return path;
+        path.push_back(current.point);
+        current = current.prev;
+    }*/
+    for(Move m : closed)
+    {
+        msg(m.point, m.gCost);
+    }
+
+    return current.gCost;
 }

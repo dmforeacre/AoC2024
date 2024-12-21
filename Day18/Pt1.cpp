@@ -6,13 +6,13 @@
 #include "../Utils.h"
 #include "../AStar.h"
 
-const int SIZE = 6;
-const int MAX_BYTES = 12;
+const int SIZE = 70;// 6;
+const int MAX_BYTES = 1024;// 12;
 
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     Timer t;
     t.startTimer();
@@ -33,6 +33,7 @@ int main()
     while(!inFile.eof())
     {
         getline(inFile, text);
+        if(text == "") continue;
         tokens = splitString(text, ',');
         bytes.push_back(Point(std::stoi(tokens[0]), std::stoi(tokens[1])));
     }
@@ -42,16 +43,20 @@ int main()
 
     inFile.close();
 
-    printGrid(map);
+    //printGrid(map);
 
-    std::list<Point> path = getPath(map, Point(0,0), Point(SIZE - 1, SIZE - 1));
-    for(Point p : path)
+    int pathLen = getPath(map, Point(0,0), Point(SIZE, SIZE));
+    /*for(Point p : path)
+    {
+        //msg(p);
         map[p.y][p.x] = 'X';
-    total = path.size();
-    printGrid(map);
+    }
+    total = path.size();*/
+    
+    //printGrid(map);
 
     t.endTimer();
 
-    msg(total,"      in", t.getElapsed(),"ms");
+    msg(pathLen,"      in", t.getElapsed(),"ms");
     return 0;
 }

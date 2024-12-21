@@ -106,15 +106,6 @@ class Point
             return out;
         }
 };
-template<typename T>
-struct Node
-{
-    T data;
-    Node* left;
-    Node* right;
-
-    Node(T value) : data(value), left(nullptr), right(nullptr) {}
-};
 
 std::vector<std::string> splitString(std::string str)
 {
