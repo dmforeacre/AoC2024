@@ -69,7 +69,8 @@ std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Poi
     using toVisit = std::vector<Move>;
     auto comparitor = [](const Move& m1, const Move& m2)
     {
-        return m1.fCost > m2.fCost;
+        //return m1.fCost > m2.fCost;
+        return m1.gCost > m2.gCost;
     };
     std::vector<Move> closed;
     std::priority_queue<Move, toVisit, decltype(comparitor)> open(comparitor);
@@ -106,6 +107,7 @@ std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Poi
         path.push_back(current->point);
         current = current->prev;
     }
+    path.push_back(current->point);
     std::reverse(path.begin(), path.end());
     return path;
 }

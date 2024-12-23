@@ -160,3 +160,10 @@ void msg(T val, Args... args)
     std::cout << val << " ";
     msg(args...);
 }
+
+void pause()
+{
+    std::string in;
+    std::cout << "Press <Enter>";
+    getline(std::cin, in);
+}

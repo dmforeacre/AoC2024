@@ -21,7 +21,7 @@ std::string removeString(std::string str, std::string target)
 int main()
 {
     std::string text;
-    std::fstream inFile("input.txt");
+    std::fstream inFile("input2.txt");
 
     Timer t;
     t.startTimer();
@@ -37,6 +37,9 @@ int main()
         if(spacePos != std::string::npos)
             patterns[i] = patterns[i].replace(spacePos, 1, "");
     }
+    for(std::string s : patterns)
+        msg("|",s,"|");
+    pause();
     std::sort(patterns.begin(), patterns.end(), [](const std:: string& a, const std::string& b) {
         return a.size() > b.size();
     });
@@ -58,16 +61,17 @@ int main()
         std::string sCopy = patterns[i];
         for(int j = i+1; j < patterns.size(); ++j)
         {
-            //msg("   Remove",patterns[j],"from",sCopy);
+            msg("   Remove",patterns[j],"from",sCopy);
             sCopy = removeString(sCopy, patterns[j]);
             if(patterns[j] == sCopy) continue;
             if(sCopy.length() == 0)
             {
-                //msg("remove pattern",sCopy);
+                msg("remove pattern",sCopy);
                 newPatterns.erase(std::find(newPatterns.begin(), newPatterns.end(), patterns[i]));
                 break;
             }
         }
+        pause();
     }
     //for(std::string s : newPatterns)
     //    msg(s);
@@ -75,8 +79,8 @@ int main()
     int index = 0;
     unsolved = designs;
     newVec = unsolved;
-    //while(index < patterns.size())
-    //{
+    while(index < patterns.size())
+    {
         unsolved = newVec;
         //msg("Total problems:",designs.size(),"Solutions found:",total,"unsolved:",unsolved.size());
         newVec.clear();
@@ -99,9 +103,9 @@ int main()
         }
         //printVector(designs);
         ++index;
-        //if(newVec.size() == 0)
-        //    break;
-    //}
+        if(newVec.size() == 0)
+            break;
+    }
 
     t.endTimer();
 

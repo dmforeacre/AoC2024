@@ -35,7 +35,7 @@ std::vector<Point> testDirs(std::vector<std::vector<char>>& map, Point p)
 int main()
 {
     std::string text;
-    std::fstream inFile("input.txt");
+    std::fstream inFile("test.txt");
 
     Timer t;
     t.startTimer();
@@ -74,17 +74,29 @@ int main()
 
     std::unordered_map<int, int> lengthCounts;
     std::vector<std::vector<std::vector<char>>> possibleMaps;
+    std::vector<Point> cheatPoints;
     std::vector<Point> path = getPath(map, start, end);
     int fullLength = path.size();
     for(Point p : path)
     {
         std::vector<Point> cheats = testDirs(map, p);
-
+        //msg("At",p, "Possible cheats:");
         for(Point dir : cheats)
         {
-            std::vector<std::vector<char>> newMap = addCheat(map, p, dir);
-            possibleMaps.push_back(newMap);
+            //msg("   ",p+dir);
+            if(std::find(cheatPoints.begin(), cheatPoints.end(), p + dir) == cheatPoints.end())
+            {
+                //msg(p + dir, "cheat added");
+                std::vector<std::vector<char>> newMap = addCheat(map, p, dir);
+                possibleMaps.push_back(newMap);
+                cheatPoints.push_back(p + dir);
+            }
+            //else
+            //{
+            //    msg(p+dir,"already found");
+            //}
         }
+        //pause();
     }
 
     for(std::vector<std::vector<char>> map : possibleMaps)
@@ -92,16 +104,25 @@ int main()
         std::vector<Point> newPath = getPath(map, start, end);
         int index = fullLength - newPath.size();
         if(index > 0 && lengthCounts.count(index) == 0)
-            lengthCounts[index] = 0;
+            lengthCounts[index] = 1;
         else if (index > 0)
             ++lengthCounts[index];
+
+        for(Point p : newPath)
+        {
+            map[p.y][p.x] = 'X';
+        }
+        //printGrid(map);
+        //msg("       Length",newPath.size());
+        //pause();
     }
     
-    for(int i = fullLength - 1; i >= 100; --i)
+    for(int i = fullLength - 1; i >= 0; --i)
     {
+        //msg(i,"has",lengthCounts[i]);
         if(lengthCounts.count(i) > 0)
         {
-            //msg(lengthCounts[i], "save",i);
+            msg(lengthCounts[i], "save",i);
             total += lengthCounts[i];
         }
     }
