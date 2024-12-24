@@ -7,7 +7,8 @@ Point endPoint;
 
 float getHCost(Point p)
 {
-    return sqrt(pow(p.x - endPoint.x, 2) + pow(p.y - endPoint.y, 2));
+    //return sqrt(pow(p.x - endPoint.x, 2) + pow(p.y - endPoint.y, 2));
+    return abs(endPoint.x - p.x) + abs(endPoint.y - p.y);
 }
 
 class Move
@@ -23,6 +24,7 @@ class Move
 
     Move(Point p)
     {
+        //msg("               Creating move with point",p);
         point = p;
         prev = nullptr;
         gCost = 0;
@@ -52,6 +54,7 @@ std::vector<Point> getNeighbors(std::vector<std::vector<char>>& map, Point p)
     Point down = p + Point(0, 1);
     Point left = p + Point(-1, 0);
     Point right = p + Point(1, 0);
+    //msg("           Testing Point",p,"with",up,down,left,right);
     if(up.isValid(map) && up.at(map) == '.')
         neighbors.push_back(up);
     if(down.isValid(map) && down.at(map) == '.')
@@ -70,7 +73,7 @@ std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Poi
     auto comparitor = [](const Move& m1, const Move& m2)
     {
         //return m1.fCost > m2.fCost;
-        return m1.gCost > m2.gCost;
+        return m1.fCost > m2.fCost;
     };
     std::vector<Move> closed;
     std::priority_queue<Move, toVisit, decltype(comparitor)> open(comparitor);
@@ -79,8 +82,9 @@ std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Poi
     open.push(Move(start));
     do
     {
-        current = &open.top();
-        //msg("At",current.point,"Cost:",current.fCost);
+        //msg("Prev:",current->point);
+        current = new Move(open.top());
+        //msg("   At",current->point,"Cost:",current->fCost);
         open.pop();
         closed.push_back(*current);
         const Move* prev = new Move(*current);
@@ -96,7 +100,8 @@ std::vector<Point> getPath(std::vector<std::vector<char>>& map, Point start, Poi
             m.prev = prev;
             m.gCost = current->gCost + 1;
             m.hCost = getHCost(n);
-            m.fCost = m.gCost + m.hCost;            
+            m.fCost = m.gCost + m.hCost;
+            //msg("       Adding",m.point,m.fCost);          
             open.push(m);
         }
     } while(!(current->point == end));

@@ -57,6 +57,6 @@ int main()
 
     t.endTimer();
 
-    msg(total,"      in", t.getElapsed(),"ms");
+    msg(total - 1,"      in", t.getElapsed(),"ms");
     return 0;
 }

@@ -69,6 +69,13 @@ class Point
             return x >= 0 && y >= 0 && x < grid[y].size() && y < grid.size();
         }
 
+        Point& operator=(const Point& right)
+        {
+            x = right.x;
+            y = right.y;
+            return *this;
+        }
+
         Point operator +(const Point& right)
         {
             return Point(x + right.x, y + right.y);

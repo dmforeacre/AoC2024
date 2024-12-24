@@ -35,7 +35,7 @@ std::vector<Point> testDirs(std::vector<std::vector<char>>& map, Point p)
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     Timer t;
     t.startTimer();
@@ -99,9 +99,11 @@ int main()
         //pause();
     }
 
-    for(std::vector<std::vector<char>> map : possibleMaps)
+    for(std::vector<std::vector<char>> testMap : possibleMaps)
     {
-        std::vector<Point> newPath = getPath(map, start, end);
+        //printGrid(testMap);
+        //msg("");
+        std::vector<Point> newPath = getPath(testMap, start, end);
         int index = fullLength - newPath.size();
         if(index > 0 && lengthCounts.count(index) == 0)
             lengthCounts[index] = 1;
@@ -110,19 +112,19 @@ int main()
 
         for(Point p : newPath)
         {
-            map[p.y][p.x] = 'X';
+            testMap[p.y][p.x] = 'X';
         }
-        //printGrid(map);
+        //printGrid(testMap);
         //msg("       Length",newPath.size());
         //pause();
     }
     
-    for(int i = fullLength - 1; i >= 0; --i)
+    for(int i = fullLength - 1; i >= 100; --i)
     {
         //msg(i,"has",lengthCounts[i]);
         if(lengthCounts.count(i) > 0)
         {
-            msg(lengthCounts[i], "save",i);
+            //msg(lengthCounts[i], "save",i);
             total += lengthCounts[i];
         }
     }
