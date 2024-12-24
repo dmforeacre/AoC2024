@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <list>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 bool canMoveBox(std::vector<std::vector<char>>& map, Point p, Point move)
 {

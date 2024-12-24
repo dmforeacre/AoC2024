@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 void buildOutInst(std::vector<int> registers, std::vector<int>& newInstructions, int val)
 {

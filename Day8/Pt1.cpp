@@ -4,7 +4,7 @@
 #include <vector>
 #include <ranges>
 #include <unordered_map>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 bool isOnGrid(std::vector<std::vector<char>>& grid, Point p)
 {

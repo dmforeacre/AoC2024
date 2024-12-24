@@ -7,7 +7,7 @@
 #include <queue>
 #include <functional>
 #include <tuple>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 // Points are direction, start, end, distance from source
 using Move = std::tuple<Point, Point, Point, long>;

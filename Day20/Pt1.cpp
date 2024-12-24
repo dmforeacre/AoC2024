@@ -4,8 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include "../Utils.h"
-#include "../AStar.h"
+#include "../Utils.hpp"
+#include "../AStar.hpp"
 
 std::vector<std::vector<char>> addCheat(std::vector<std::vector<char>>& map, Point p, Point dir)
 {

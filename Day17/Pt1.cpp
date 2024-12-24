@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 int getOperand(std::vector<int>& registers, int operand)
 {

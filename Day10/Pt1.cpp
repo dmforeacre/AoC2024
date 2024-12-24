@@ -4,7 +4,7 @@
 #include <vector>
 #include <numeric>
 #include <list>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 void traverse(std::vector<std::vector<int>>& grid, std::vector<Point>& visited, Point p)
 {

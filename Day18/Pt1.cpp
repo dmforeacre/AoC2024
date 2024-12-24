@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include "../Utils.h"
-#include "../AStar.h"
+#include "../Utils.hpp"
+#include "../AStar.hpp"
 
 const int SIZE = 70;// 6;
 const int MAX_BYTES = 1024;// 12;

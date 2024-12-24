@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <list>
-#include "../Utils.h"
+#include "../Utils.hpp"
 
 bool cascadeBoxCheck(std::vector<std::vector<char>>& map, Point p, Point move)
 {

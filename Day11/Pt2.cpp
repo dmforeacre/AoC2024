@@ -2,8 +2,8 @@
 #include <fstream>
 #include <functional>
 #include <cmath>
-#include "../Utils.h"
-#include "../memoizer.h"
+#include "../Utils.hpp"
+#include "../memoizer.hpp"
 
 std::vector<int> evolveStone(int stone)
 {
