@@ -70,8 +70,6 @@ int main()
         ++i;
     }
 
-    t.endTimer();
-
     std::unordered_map<int, int> lengthCounts;
     std::vector<std::vector<std::vector<char>>> possibleMaps;
     std::vector<Point> cheatPoints;
@@ -93,12 +91,14 @@ int main()
             }
             //else
             //{
-            //    msg(p+dir,"already found");
+            //    msg(p+dir,"already used");
             //}
         }
         //pause();
     }
+    msg(possibleMaps.size(), "Possible maps made");
 
+    int count =0;
     for(std::vector<std::vector<char>> testMap : possibleMaps)
     {
         //printGrid(testMap);
@@ -110,24 +110,29 @@ int main()
         else if (index > 0)
             ++lengthCounts[index];
 
-        for(Point p : newPath)
-        {
-            testMap[p.y][p.x] = 'X';
-        }
+        //for(Point p : newPath)
+        //{
+        //    testMap[p.y][p.x] = 'X';
+        //}
         //printGrid(testMap);
         //msg("       Length",newPath.size());
         //pause();
+        msg("   Map",count,"checked");
+        ++count;
     }
+    msg("All possible paths checked");
     
     for(int i = fullLength - 1; i >= 100; --i)
     {
         //msg(i,"has",lengthCounts[i]);
         if(lengthCounts.count(i) > 0)
         {
-            //msg(lengthCounts[i], "save",i);
+            msg(lengthCounts[i], "save",i);
             total += lengthCounts[i];
         }
     }
+
+    t.endTimer();
 
     msg(total,"      in", t.getElapsed(),"ms");
     return 0;
