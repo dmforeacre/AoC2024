@@ -11,7 +11,7 @@ std::string removeString(std::string str, std::string target)
     while(pos != std::string::npos)
     {
         //msg("   Removed",target,"at",pos);
-        str = str.replace(pos,target.length(), "");
+        str = str.replace(pos,target.length(), ".");
         pos = str.find(target);
     }
     //msg("       Left with",str);
@@ -21,7 +21,7 @@ std::string removeString(std::string str, std::string target)
 int main()
 {
     std::string text;
-    std::fstream inFile("input2.txt");
+    std::fstream inFile("input.txt");
 
     Timer t;
     t.startTimer();
@@ -37,12 +37,9 @@ int main()
         if(spacePos != std::string::npos)
             patterns[i] = patterns[i].replace(spacePos, 1, "");
     }
-    for(std::string s : patterns)
-        msg("|",s,"|");
-    pause();
-    std::sort(patterns.begin(), patterns.end(), [](const std:: string& a, const std::string& b) {
-        return a.size() > b.size();
-    });
+    //for(std::string s : patterns)
+    //    msg("|",s,"|");
+    //pause();
 
     getline(inFile, text);
 
@@ -54,59 +51,75 @@ int main()
             break;
         designs.push_back(text);
     }
-    newPatterns = patterns;
     inFile.close();
+
+    // Sort patterns from longest to shortest
+    std::sort(patterns.begin(), patterns.end(), [](const std:: string& a, const std::string& b) {
+        return a.size() > b.size();
+    });
+
+    newPatterns = patterns;
+
+    // Remove redundant patterns from patterns list
     for(int i = 0; i < patterns.size(); ++i)
     {
         std::string sCopy = patterns[i];
         for(int j = i+1; j < patterns.size(); ++j)
         {
-            msg("   Remove",patterns[j],"from",sCopy);
+            //msg("   Remove",patterns[j],"from",sCopy);
             sCopy = removeString(sCopy, patterns[j]);
             if(patterns[j] == sCopy) continue;
-            if(sCopy.length() == 0)
-            {
-                msg("remove pattern",sCopy);
-                newPatterns.erase(std::find(newPatterns.begin(), newPatterns.end(), patterns[i]));
-                break;
-            }
+
         }
-        pause();
+        bool isPossible = true;
+        for(char c : sCopy)
+            if(c != '.')
+                isPossible = false;
+        if(isPossible)
+        {
+            //msg("remove pattern",sCopy);
+            newPatterns.erase(std::find(newPatterns.begin(), newPatterns.end(), patterns[i]));
+            break;
+        }
+        //pause();
     }
     //for(std::string s : newPatterns)
-    //    msg(s);
+        //msg(s);
 
-    int index = 0;
-    unsolved = designs;
-    newVec = unsolved;
-    while(index < patterns.size())
-    {
-        unsolved = newVec;
         //msg("Total problems:",designs.size(),"Solutions found:",total,"unsolved:",unsolved.size());
-        newVec.clear();
-        for(std::string design : unsolved)
+    for(std::string design : designs)
+    {
+        int index = 0;
+        while(index < newPatterns.size())
         {
             std::string designCopy = design;
-            for(int i = index; i < patterns.size(); ++i)
+            //msg("Start design",design);
+            for(int i = index; i < newPatterns.size(); ++i)
             {
                 //msg("       Starting with:",patterns[i]);
-                designCopy = removeString(designCopy, patterns[i]);
+                designCopy = removeString(designCopy, newPatterns[i]);
             }
-            if(designCopy.length() == 0)
+            //msg("Replaced design",designCopy);
+            //pause();
+            bool isPossible = true;
+            for(char c : designCopy)
+                if(c != '.')
+                    isPossible = false;
+            if(isPossible)
             {
+                //msg("   Solved!");
                 ++total;
-            }else
-            {
-                //msg("   Unsolved:",design);
-                newVec.push_back(design);
+                break;
             }
+            ++index;        
+            //msg("           Finished run",index,total,"solved");
         }
         //printVector(designs);
         ++index;
-        if(newVec.size() == 0)
-            break;
-    }
 
+        //pause();
+    }
+    //msg(patterns.size(),"patterns trimmed to",newPatterns.size());
     t.endTimer();
 
     msg(total,"      in", t.getElapsed(),"ms");
