@@ -26,7 +26,7 @@ ll simulate(ll num)
 int main()
 {
     std::string text;
-    std::fstream inFile("test.txt");
+    std::fstream inFile("input.txt");
 
     Timer t;
     t.startTimer();
