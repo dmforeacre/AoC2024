@@ -5,17 +5,44 @@
 #include <algorithm>
 #include "../Utils.hpp"
 
-std::string removeString(std::string str, std::string target)
+bool canMake(std::vector<std::string> patterns, std::string str)
 {
-    size_t pos = str.find(target);
-    while(pos != std::string::npos)
+    if(str.length() == 0)
+        return true;
+    bool canMakeFlag = false;
+    for(std::string pattern : patterns)
     {
-        //msg("   Removed",target,"at",pos);
-        str = str.replace(pos,target.length(), ".");
-        pos = str.find(target);
+        std::string prefix = str.substr(0,pattern.size());
+        if(prefix == pattern)
+        {
+            canMakeFlag = canMake(patterns, str.replace(0, prefix.length(), ""));
+            if(canMakeFlag)
+                return true;
+        }
     }
-    //msg("       Left with",str);
-    return str;
+    return false;
+}
+
+bool canMakeDebug(std::vector<std::string> patterns, std::string str)
+{
+    msg("   Checking",str);
+    pause();
+    if(str.length() == 0)
+        return true;
+    bool canMakeFlag = false;
+    for(std::string pattern : patterns)
+    {
+        std::string prefix = str.substr(0,pattern.size());
+        if(prefix == pattern)
+        {
+            msg("       removing",prefix);
+            canMakeFlag = canMakeDebug(patterns, str.replace(0, prefix.length(), ""));
+            if(canMakeFlag)
+                return true;
+        }
+    }
+    msg("           Dead end with", str);
+    return false;
 }
 
 int main()
@@ -37,18 +64,14 @@ int main()
         if(spacePos != std::string::npos)
             patterns[i] = patterns[i].replace(spacePos, 1, "");
     }
-    //for(std::string s : patterns)
-    //    msg("|",s,"|");
-    //pause();
 
     getline(inFile, text);
 
-    std::vector<std::string> newPatterns, designs, unsolved, newVec;
+    std::vector<std::string> designs;
     while(!inFile.eof())
     {
         getline(inFile, text);
-        if(text == "")
-            break;
+        if(text == "") break;
         designs.push_back(text);
     }
     inFile.close();
@@ -58,68 +81,28 @@ int main()
         return a.size() > b.size();
     });
 
-    newPatterns = patterns;
+    std::vector<std::string> newPatterns;
 
     // Remove redundant patterns from patterns list
-    for(int i = 0; i < patterns.size(); ++i)
+    for(auto it = patterns.begin(); it != patterns.end(); ++it)
     {
-        std::string sCopy = patterns[i];
-        for(int j = i+1; j < patterns.size(); ++j)
-        {
-            //msg("   Remove",patterns[j],"from",sCopy);
-            sCopy = removeString(sCopy, patterns[j]);
-            if(patterns[j] == sCopy) continue;
-
-        }
-        bool isPossible = true;
-        for(char c : sCopy)
-            if(c != '.')
-                isPossible = false;
-        if(isPossible)
-        {
-            //msg("remove pattern",sCopy);
-            newPatterns.erase(std::find(newPatterns.begin(), newPatterns.end(), patterns[i]));
-            break;
-        }
-        //pause();
+        std::string sCopy = *it;
+        if(!canMake(std::vector<std::string>(it + 1, patterns.end()), sCopy))
+            newPatterns.push_back(*it);
     }
-    //for(std::string s : newPatterns)
-        //msg(s);
 
-        //msg("Total problems:",designs.size(),"Solutions found:",total,"unsolved:",unsolved.size());
     for(std::string design : designs)
     {
-        int index = 0;
-        while(index < newPatterns.size())
+        //msg("Design:",design);
+        if(canMake(newPatterns, design))
+            ++total;
+        else
         {
-            std::string designCopy = design;
-            //msg("Start design",design);
-            for(int i = index; i < newPatterns.size(); ++i)
-            {
-                //msg("       Starting with:",patterns[i]);
-                designCopy = removeString(designCopy, newPatterns[i]);
-            }
-            //msg("Replaced design",designCopy);
-            //pause();
-            bool isPossible = true;
-            for(char c : designCopy)
-                if(c != '.')
-                    isPossible = false;
-            if(isPossible)
-            {
-                //msg("   Solved!");
-                ++total;
-                break;
-            }
-            ++index;        
-            //msg("           Finished run",index,total,"solved");
+            canMakeDebug(newPatterns, design);
+            pause();
         }
-        //printVector(designs);
-        ++index;
-
-        //pause();
     }
-    //msg(patterns.size(),"patterns trimmed to",newPatterns.size());
+
     t.endTimer();
 
     msg(total,"      in", t.getElapsed(),"ms");
