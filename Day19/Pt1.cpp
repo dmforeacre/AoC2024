@@ -98,8 +98,8 @@ int main()
             ++total;
         else
         {
-            canMakeDebug(newPatterns, design);
-            pause();
+            //canMakeDebug(newPatterns, design);
+            //pause();
         }
     }
 
